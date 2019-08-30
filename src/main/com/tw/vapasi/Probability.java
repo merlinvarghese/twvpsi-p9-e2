@@ -1,37 +1,65 @@
 package com.tw.vapasi;
+import java.util.Objects;
 
 class Probability {
-    private int maxChances;
-    private int occurences;
+    private final double value;
 
-    Probability(int maxChances, int occurrences) {
-        this.maxChances = maxChances;
-        this.occurences = occurrences;
-
+    Probability(double value) {
+        this.value = value;
     }
 
-    boolean compareEvents(Probability probability1, Probability probability2) {
-        if (getProbability(probability1) == getProbability(probability2))
-            return true;
-        return false;
+
+    Probability and(Probability other) {
+        return new Probability(this.value*(other.value));
     }
 
-    double getProbability(Probability probability) {
-        return probability.occurences / probability.maxChances;
-    }
-    double getProbability1(Probability probability) {
-        return 0.25;
+    Probability or(Probability other) {
+        double result = (this.value+other.value-(this.and(other).value));
+
+        return new Probability(result);
     }
 
-    @Override
+    Probability not() {
+        return new Probability(1-(this.value));
+    }
+
+   /* @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Probability that = (Probability) o;
+        return Double.compare(that.value, value) == 0;
+    }*/
+
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(value);
+//    }
+
+        @Override
     public boolean equals(Object obj) {
-        if(this == obj)
+        if (this == obj)
             return true;
         if ((obj == null) || (obj.getClass() != this.getClass()))
             return false;
-        if (getProbability(this) == getProbability((Probability)obj))
-            return true;
-        else
-            return false;
+        Probability other = (Probability) obj;
+        //return other.value.equals(this.value);
+        return almostSameValue(other.value, this.value);
+    }
+
+    private boolean almostSameValue(double value, double otherValue) {
+        return Math.abs(value - otherValue) < 0.001;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
+    }
+
+    @Override
+    public String toString() {
+        return "Probability{" +
+                "value=" + value +
+                '}';
     }
 }
